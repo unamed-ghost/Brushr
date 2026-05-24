@@ -1,61 +1,22 @@
-//
-//  ContentView.swift
-//  Brushr
-//
-//  Created by Jens Heyn on 24.05.26.
-//
-
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @State private var selectedTab = 0
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
+        TabView(selection: $selectedTab) {
+            Tab("Home", systemImage: "house.fill", value: 0) {
+                HomeView(selectedTab: $selectedTab)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+            Tab("Putzen", systemImage: "sparkles", value: 1) {
+                BrushingView(selectedTab: $selectedTab)
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            Tab("Aktivität", systemImage: "calendar", value: 2) {
+                HistoryView()
+            }
+            Tab("Einstellungen", systemImage: "gearshape.fill", value: 3) {
+                SettingsView()
             }
         }
     }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
