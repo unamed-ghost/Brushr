@@ -221,14 +221,14 @@ private struct TimerFlowView: View {
             .frame(width: 260, height: 260)
 
             HStack(spacing: 20) {
-                Button("Abbrechen", action: onCancel)
+                Button("Verwerfen", action: onCancel)
                     .font(.headline)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 28)
                     .padding(.vertical, 14)
                     .glassEffect(.regular.interactive(), in: Capsule())
 
-                Button("Überspringen", action: onSkip)
+                Button("Weiter", action: onSkip)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.horizontal, 28)

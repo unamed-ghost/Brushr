@@ -40,7 +40,6 @@ struct HistoryView: View {
                     .listRowBackground(Color.clear)
                 }
             }
-            .navigationTitle("Aktivität")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     monthYearFilter
