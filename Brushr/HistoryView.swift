@@ -100,11 +100,25 @@ private struct HistoryRow: View {
 
             Spacer()
 
-            Text(formatBrushDuration(session.brushDuration))
-                .font(.headline)
-                .fontWeight(.bold)
-                .monospacedDigit()
-                .foregroundStyle(.teal)
+            HStack(spacing: 8) {
+                if session.usedMouthwash {
+                    Image(systemName: "drop.fill")
+                        .foregroundStyle(Color.blue)
+                }
+                if session.usedFloss {
+                    Image(systemName: "arrow.up.and.down")
+                        .foregroundStyle(Color.mint)
+                }
+            }
+            .font(.subheadline)
+
+            if session.brushDuration > 0 {
+                Text(formatBrushDuration(session.brushDuration))
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .monospacedDigit()
+                    .foregroundStyle(.teal)
+            }
         }
         .padding(.vertical, 4)
     }
