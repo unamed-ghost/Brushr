@@ -1,9 +1,13 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     @AppStorage("userName") private var userName = ""
     @AppStorage("brushDurationSeconds") private var brushDurationSeconds = 120.0
     @AppStorage("mouthwashDurationSeconds") private var mouthwashDurationSeconds = 30.0
+    @Environment(\.modelContext) private var modelContext
+    @Query private var sessions: [BrushSession]
+    @State private var showResetConfirmation = false
 
     var body: some View {
         NavigationStack {
@@ -44,11 +48,36 @@ struct SettingsView: View {
                 }
                 
                 Section {
+                    Button(role: .destructive) {
+                        showResetConfirmation = true
+                    } label: {
+                        Label("App zurücksetzen", systemImage: "trash")
+                    }
                 } footer: {
-                    Text("Brushr 0.1.2\nTestversion in einer frühen Entwicklungsphase.\nEs können Fehler auftreten.")
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .multilineTextAlignment(.center)
+                    Text("Löscht alle Daten und Einstellungen unwiederruflich.")
                 }
+
+            }
+            .safeAreaInset(edge: .bottom) {
+                Text("Brushr 0.2 · Testversion in einer frühen Entwicklungsphase.")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 8)
+            }
+            .confirmationDialog(
+                "App zurücksetzen?",
+                isPresented: $showResetConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Alle Daten löschen", role: .destructive) {
+                    for session in sessions { modelContext.delete(session) }
+                    userName = ""
+                    brushDurationSeconds = 120.0
+                    mouthwashDurationSeconds = 30.0
+                }
+            } message: {
+                Text("Alle Daten und Einstellungen werden gelöscht.")
             }
         }
     }
