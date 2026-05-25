@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab = 0
+    @State private var selectedTab = 1
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab("Home", systemImage: "house.fill", value: 0) {
-                HomeView(selectedTab: $selectedTab)
+            Tab("Erfolge", systemImage: "trophy.fill", value: 0) {
+                SuccessView(selectedTab: $selectedTab)
             }
             Tab("Putzen", systemImage: "sparkles", value: 1) {
                 BrushingView(selectedTab: $selectedTab)
@@ -14,7 +14,7 @@ struct ContentView: View {
             Tab("Aktivität", systemImage: "calendar", value: 2) {
                 HistoryView()
             }
-            Tab("Einstellungen", systemImage: "gearshape.fill", value: 3) {
+            Tab("Du", systemImage: "person.fill", value: 3) {
                 SettingsView()
             }
         }

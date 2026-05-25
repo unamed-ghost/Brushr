@@ -15,6 +15,7 @@ struct BrushingView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage("brushDurationSeconds") private var brushDurationSeconds = 120.0
     @AppStorage("mouthwashDurationSeconds") private var mouthwashDurationSeconds = 30.0
+    @AppStorage("userName") private var userName = ""
 
     @State private var step: BrushStep = .ready
     @State private var timeRemaining: Double = 0
@@ -30,6 +31,7 @@ struct BrushingView: View {
             case .ready:
                 ReadyView(
                     configuredDuration: brushDurationSeconds,
+                    userName: userName,
                     onStart: startBrushing
                 )
             case .brushing:
@@ -148,6 +150,7 @@ struct BrushingView: View {
 
 private struct ReadyView: View {
     let configuredDuration: Double
+    let userName: String
     let onStart: () -> Void
 
     var body: some View {
@@ -159,7 +162,7 @@ private struct ReadyView: View {
                     .font(.system(size: 52, weight: .light))
                     .foregroundStyle(.tint)
 
-                Text("Bereit?")
+                Text(userName.isEmpty ? "Bereit?" : "Bereit, \(userName)?")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
