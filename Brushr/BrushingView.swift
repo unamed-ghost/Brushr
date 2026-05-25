@@ -8,6 +8,8 @@ private enum BrushStep: Equatable {
     case mouthwashQuestion
     case mouthwashing
     case flossQuestion
+    case mouthwashOnly
+    case flossOnly
 }
 
 struct BrushingView: View {
@@ -32,7 +34,9 @@ struct BrushingView: View {
                 ReadyView(
                     configuredDuration: brushDurationSeconds,
                     userName: userName,
-                    onStart: startBrushing
+                    onStart: startBrushing,
+                    onMouthwashOnly: startMouthwashOnly,
+                    onFlossOnly: startFlossOnly
                 )
             case .brushing:
                 TimerFlowView(
@@ -65,6 +69,22 @@ struct BrushingView: View {
                     noLabel: "Nein",
                     onYes: { saveSession(usedFloss: true) },
                     onNo: { saveSession(usedFloss: false) }
+                )
+            case .mouthwashOnly:
+                TimerFlowView(
+                    timeRemaining: timeRemaining,
+                    totalTime: totalTime,
+                    title: "Mundspülung",
+                    onCancel: cancelSession,
+                    onSkip: finishMouthwashOnly
+                )
+            case .flossOnly:
+                QuestionView(
+                    question: "Zahnseide benutzt?",
+                    yesLabel: "Fertig",
+                    noLabel: "Abbrechen",
+                    onYes: saveFlossOnly,
+                    onNo: cancelSession
                 )
             }
         }
@@ -115,6 +135,44 @@ struct BrushingView: View {
         selectedTab = 0
     }
 
+    private func startMouthwashOnly() {
+        sessionStartDate = Date()
+        totalTime = mouthwashDurationSeconds
+        timeRemaining = mouthwashDurationSeconds
+        step = .mouthwashOnly
+        startTimer { finishMouthwashOnly() }
+    }
+
+    private func finishMouthwashOnly() {
+        stopTimer()
+        let session = BrushSession(
+            date: sessionStartDate,
+            brushDuration: 0,
+            usedMouthwash: true,
+            usedFloss: false
+        )
+        modelContext.insert(session)
+        resetToReady()
+        selectedTab = 0
+    }
+
+    private func startFlossOnly() {
+        sessionStartDate = Date()
+        step = .flossOnly
+    }
+
+    private func saveFlossOnly() {
+        let session = BrushSession(
+            date: sessionStartDate,
+            brushDuration: 0,
+            usedMouthwash: false,
+            usedFloss: true
+        )
+        modelContext.insert(session)
+        resetToReady()
+        selectedTab = 0
+    }
+
     private func cancelSession() {
         stopTimer()
         resetToReady()
@@ -152,6 +210,8 @@ private struct ReadyView: View {
     let configuredDuration: Double
     let userName: String
     let onStart: () -> Void
+    let onMouthwashOnly: () -> Void
+    let onFlossOnly: () -> Void
 
     var body: some View {
         VStack(spacing: 48) {
@@ -175,6 +235,17 @@ private struct ReadyView: View {
                 .glassEffect(.regular.interactive(), in: Capsule())
 
             Spacer()
+
+            HStack(spacing: 32) {
+                Button("Nur Mundspülung", action: onMouthwashOnly)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Button("Nur Zahnseide", action: onFlossOnly)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.bottom, 24)
         }
         .padding()
     }
