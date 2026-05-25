@@ -10,8 +10,6 @@ struct BrushrApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
-            // Schema changed (e.g. Item → BrushSession) – wipe old store and retry.
-            // Safe here because there is no existing user data worth keeping.
             let fm = FileManager.default
             if let appSupport = try? fm.url(
                 for: .applicationSupportDirectory,

@@ -165,25 +165,9 @@ private struct ReadyView: View {
                 Text(userName.isEmpty ? "Bereit?" : "Bereit, \(userName)?")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-
-                Text(formatBrushDuration(configuredDuration))
-                    .font(.system(size: 22, weight: .medium, design: .rounded))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
             }
 
-            ZStack {
-                Circle()
-                    .stroke(Color.secondary.opacity(0.15), lineWidth: 12)
-
-                Circle()
-                    .trim(from: 0, to: 1)
-                    .stroke(Color.teal.opacity(0.3), style: StrokeStyle(lineWidth: 12, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-            }
-            .frame(width: 220, height: 220)
-
-            Button("Putzen starten", action: onStart)
+            Button("Zähne putzen", action: onStart)
                 .font(.title3)
                 .fontWeight(.semibold)
                 .padding(.horizontal, 48)
