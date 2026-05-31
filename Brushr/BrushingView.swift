@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AudioToolbox
 
 
 private enum BrushStep: Equatable {
@@ -89,6 +90,20 @@ struct BrushingView: View {
             }
         }
         .animation(.easeInOut(duration: 0.35), value: step)
+        .onChange(of: step) { _, newStep in
+            let timerActive = newStep == .brushing || newStep == .mouthwashing || newStep == .mouthwashOnly
+            UIApplication.shared.isIdleTimerDisabled = timerActive
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+    }
+
+    private func playCompletionSound() {
+        AudioServicesPlaySystemSound(1057)                          // Tink – pip
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
+            AudioServicesPlaySystemSound(1054)                      // Bloom – dum
+        }
     }
 
     private func startBrushing() {
@@ -96,7 +111,10 @@ struct BrushingView: View {
         timeRemaining = brushDurationSeconds
         sessionStartDate = Date()
         step = .brushing
-        startTimer { skipBrushing() }
+        startTimer {
+            playCompletionSound()
+            skipBrushing()
+        }
     }
 
     private func skipBrushing() {
@@ -111,7 +129,10 @@ struct BrushingView: View {
         totalTime = mouthwashDurationSeconds
         timeRemaining = mouthwashDurationSeconds
         step = .mouthwashing
-        startTimer { skipMouthwashing() }
+        startTimer {
+            playCompletionSound()
+            skipMouthwashing()
+        }
     }
 
     private func skipMouthwashing() {
@@ -140,7 +161,10 @@ struct BrushingView: View {
         totalTime = mouthwashDurationSeconds
         timeRemaining = mouthwashDurationSeconds
         step = .mouthwashOnly
-        startTimer { finishMouthwashOnly() }
+        startTimer {
+            playCompletionSound()
+            finishMouthwashOnly()
+        }
     }
 
     private func finishMouthwashOnly() {

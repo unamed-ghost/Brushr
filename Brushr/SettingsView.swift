@@ -59,7 +59,7 @@ struct SettingsView: View {
 
             }
             .safeAreaInset(edge: .bottom) {
-                Text("Brushr 0.2 · Testversion in einer frühen Entwicklungsphase.")
+                Text("Brushr 0.3 · Testversion in einer frühen Entwicklungsphase.")
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)

@@ -7,6 +7,7 @@ struct HistoryView: View {
 
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
+    @State private var showAddEntry = false
 
     private var availableYears: [Int] {
         let years = Set(sessions.map { Calendar.current.component(.year, from: $0.date) })
@@ -45,9 +46,19 @@ struct HistoryView: View {
                     monthYearFilter
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
+                    HStack(spacing: 16) {
+                        Button {
+                            showAddEntry = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        EditButton()
+                    }
                 }
             }
+        }
+        .sheet(isPresented: $showAddEntry) {
+            AddEntryView()
         }
     }
 
